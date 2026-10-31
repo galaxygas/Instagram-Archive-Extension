@@ -1,0 +1,18 @@
+{
+  "extName": {
+    "message": "Gram Archiver",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "Bulk-archive an Instagram profile you can view: posts, reels, tagged, highlights, stories, comments, profile data and more. Everything stays on your computer.",
+    "description": "Extension description"
+  },
+  "contextMenuArchive": {
+    "message": "Archive this profile with Gram Archiver",
+    "description": "Context menu entry on instagram.com"
+  },
+  "contextMenuOpen": {
+    "message": "Open Gram Archiver",
+    "description": "Context menu entry"
+  }
+}

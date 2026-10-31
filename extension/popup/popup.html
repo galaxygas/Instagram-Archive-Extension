@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="color-scheme" content="light dark">
+<title>Gram Archiver</title>
+<link rel="stylesheet" href="../shared/ui.css">
+<link rel="stylesheet" href="popup.css">
+<script type="module" src="popup.js"></script>
+</head>
+<body>
+<header class="top">
+  <img src="../icons/icon-32.png" alt="" width="24" height="24">
+  <span class="title">Gram Archiver</span>
+  <a class="icon-btn" href="../options/options.html" target="_blank" title="Settings" aria-label="Settings">⚙</a>
+</header>
+<main>
+  <div id="detected" class="detected" hidden>
+    <div class="label">Profile on this page</div>
+    <div class="who" id="who"></div>
+    <button id="archiveThis" class="btn primary wide" type="button">Archive this profile</button>
+  </div>
+  <div id="notDetected" class="detected muted" hidden>
+    Open an Instagram profile to archive it in one click, or type a username in the archiver.
+  </div>
+  <button id="openArchiver" class="btn wide" type="button">Open archiver</button>
+</main>
+<footer class="foot">Everything is saved on your computer. Nothing is sent anywhere else.</footer>
+</body>
+</html>

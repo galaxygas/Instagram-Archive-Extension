@@ -1,0 +1,16 @@
+{
+  "name": "gram-archiver",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Bulk Instagram profile archiver browser extension for Chrome and Firefox (Manifest V3).",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test \"tests/unit/*.test.mjs\"",
+    "test:e2e": "node tests/e2e/run.mjs",
+    "package": "node scripts/package.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

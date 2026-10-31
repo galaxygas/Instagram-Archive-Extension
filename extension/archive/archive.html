@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Gram Archiver</title>
+<link rel="icon" href="../icons/icon-32.png">
+<link rel="stylesheet" href="../shared/ui.css">
+<link rel="stylesheet" href="archive.css">
+<script type="module" src="archive.js"></script>
+</head>
+<body>
+<header class="appbar">
+  <div class="brand">
+    <img src="../icons/icon-48.png" alt="" width="32" height="32">
+    <div>
+      <div class="brand-name">Gram Archiver</div>
+      <div class="brand-sub">Bulk profile archiver · everything stays on your computer</div>
+    </div>
+  </div>
+  <div class="appbar-actions">
+    <span id="connection" class="pill" title="Status of the instagram.com tab used for requests">Not connected</span>
+    <button id="themeToggle" class="icon-btn" type="button" title="Switch theme" aria-label="Switch theme">◐</button>
+    <a class="icon-btn" href="../options/options.html" target="_blank" title="Settings" aria-label="Settings">⚙</a>
+  </div>
+</header>
+
+<div id="permBanner" class="banner warn" hidden>
+  <div>
+    <strong>Site access needed.</strong> Gram Archiver needs access to instagram.com and Instagram's media servers (cdninstagram.com, fbcdn.net) to read and save content.
+  </div>
+  <button id="grantPerms" class="btn primary" type="button">Grant access</button>
+</div>
+
+<main class="layout">
+  <section class="col setup">
+    <div class="card">
+      <h2 class="card-title">1. Choose a profile</h2>
+      <form id="lookupForm" class="lookup" autocomplete="off">
+        <label class="sr-only" for="username">Username or profile link</label>
+        <div class="input-with-prefix">
+          <span>@</span>
+          <input id="username" name="username" placeholder="username or instagram.com/username" spellcheck="false" required>
+        </div>
+        <button class="btn" type="submit" id="lookupBtn">Look up</button>
+      </form>
+      <p class="hint">Make sure you are logged in to instagram.com in this browser. Private accounts can only be archived if you follow them.</p>
+      <div id="profileCard" class="profile-card" hidden></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h2 class="card-title">2. What to archive</h2>
+        <div class="seg small" role="group" aria-label="Quick selection">
+          <button type="button" data-preset="all">All</button>
+          <button type="button" data-preset="media">Media</button>
+          <button type="button" data-preset="none">None</button>
+        </div>
+      </div>
+      <div id="categories" class="checks"></div>
+    </div>
+
+    <details class="card" open>
+      <summary class="card-title">3. Media options</summary>
+      <div class="checks">
+        <label class="check"><input type="checkbox" data-opt="media.images"><span><b>Photos</b><small>Largest resolution Instagram offers.</small></span></label>
+        <label class="check"><input type="checkbox" data-opt="media.videos"><span><b>Videos</b><small>MP4 with sound (Instagram's standard file, up to 720p).</small></span></label>
+        <label class="check"><input type="checkbox" data-opt="media.maxQuality"><span><b>Maximum video quality</b><small>Downloads the separate high-quality video and audio tracks (often 1080p) and joins them into one MP4. Slower. Instagram may only offer 720p to Firefox.</small></span></label>
+        <label class="check indent"><input type="checkbox" data-opt="media.keepDashTracks"><span><b>Keep separate tracks if joining fails</b><small>Saves the raw video and audio tracks as well.</small></span></label>
+        <label class="check"><input type="checkbox" data-opt="media.covers"><span><b>Video cover images</b><small>Thumbnail image of every video.</small></span></label>
+        <label class="check"><input type="checkbox" data-opt="media.audio"><span><b>Music / original audio</b><small>Audio track attached to reels, posts and stories, when Instagram provides one.</small></span></label>
+        <label class="check"><input type="checkbox" data-opt="media.hiRes"><span><b>Ask for the highest image resolution</b><small>Sets Instagram's screen-size cookies so it offers larger image versions.</small></span></label>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary class="card-title">4. Comments &amp; likes</summary>
+      <div class="checks">
+        <label class="check"><input type="checkbox" data-opt="extras.comments"><span><b>Comments</b><small>Every comment on posts, reels and tagged posts. Adds at least one request per post.</small></span></label>
+        <label class="check indent"><input type="checkbox" data-opt="extras.replies"><span><b>Include replies</b><small>Reply threads under each comment.</small></span></label>
+        <label class="field indent"><span>Max comments per post <small>(0 = all)</small></span><input type="number" min="0" step="1" data-opt="extras.maxComments"></label>
+        <label class="check"><input type="checkbox" data-opt="extras.likers"><span><b>Likers</b><small>Accounts that liked each post (Instagram returns a limited list).</small></span></label>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary class="card-title">5. Metadata &amp; exports</summary>
+      <div class="checks">
+        <label class="check"><input type="checkbox" data-opt="metadata.sidecar"><span><b>JSON file per post</b><small>Caption, date, location, tags, collaborators, music, counts and file list next to each post.</small></span></label>
+        <label class="check indent"><input type="checkbox" data-opt="metadata.rawSidecar"><span><b>Include the raw Instagram data</b><small>Everything Instagram returned for the post, unmodified.</small></span></label>
+        <label class="check"><input type="checkbox" data-opt="metadata.captions"><span><b>Caption text files</b><small>A .txt file per post with the caption.</small></span></label>
+        <label class="check"><input type="checkbox" data-opt="metadata.csv"><span><b>CSV spreadsheets</b><small>media.csv, comments.csv, followers.csv, following.csv.</small></span></label>
+        <label class="check"><input type="checkbox" data-opt="metadata.viewer"><span><b>Offline viewer</b><small>An index.html you can open to browse the archive like a profile, without internet.</small></span></label>
+        <label class="check"><input type="checkbox" data-opt="metadata.rawResponses"><span><b>Every raw API response</b><small>For research: saves each response to data/raw/. Creates many files.</small></span></label>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary class="card-title">6. Filters</summary>
+      <div class="grid2">
+        <label class="field"><span>From date</span><input type="date" data-opt="filters.from"></label>
+        <label class="field"><span>To date</span><input type="date" data-opt="filters.to"></label>
+        <label class="field"><span>Max items per category <small>(0 = no limit)</small></span><input type="number" min="0" step="1" data-opt="filters.maxItems"></label>
+      </div>
+      <div class="checks">
+        <label class="check"><input type="checkbox" data-opt="filters.skipExisting"><span><b>Skip items already archived</b><small>Items saved in earlier runs of this profile are not downloaded again.</small></span></label>
+        <label class="check"><input type="checkbox" data-opt="filters.stopAtExisting"><span><b>Update mode</b><small>Stop a feed once it reaches posts archived earlier (pinned posts are ignored). Fast way to fetch only new posts.</small></span></label>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary class="card-title">7. Output</summary>
+      <div class="seg" role="radiogroup" aria-label="Output format">
+        <label><input type="radio" name="outputMode" value="folder" data-opt="output.mode"><span>Folders</span></label>
+        <label><input type="radio" name="outputMode" value="zip" data-opt="output.mode"><span>ZIP</span></label>
+      </div>
+      <p class="hint" id="outputHint"></p>
+      <div id="zipOptions" class="checks" hidden>
+        <label class="check" id="zipStreamRow"><input type="checkbox" data-opt="output.zipStream"><span><b>Write one ZIP directly to disk</b><small>You pick where to save it when the job starts; works for any size (Chrome).</small></span></label>
+        <label class="field"><span>ZIP part size (MB)</span><input type="number" min="50" step="50" data-opt="output.partSizeMB"></label>
+      </div>
+      <label class="field"><span>Live recording limit (minutes)</span><input type="number" min="1" step="1" data-opt="live.maxMinutes"></label>
+    </details>
+
+    <div class="card sticky-start">
+      <div id="estimate" class="estimate"></div>
+      <div class="start-row">
+        <button id="startBtn" class="btn primary big" type="button" disabled>Archive</button>
+        <button id="queueBtn" class="btn" type="button" disabled title="Add to the queue and run after the current job">Add to queue</button>
+      </div>
+      <p class="hint">Speed: <b id="speedLabel">Safe</b> · <a href="../options/options.html" target="_blank">change</a>. Slower pacing protects your account from Instagram's limits.</p>
+    </div>
+  </section>
+
+  <section class="col run">
+    <div class="card">
+      <div class="card-head">
+        <h2 class="card-title">Progress</h2>
+        <div class="controls">
+          <button id="pauseBtn" class="btn" type="button" disabled>Pause</button>
+          <button id="cancelBtn" class="btn danger" type="button" disabled>Stop</button>
+        </div>
+      </div>
+      <div id="idle" class="empty">No archive running. Look up a profile, choose what to save and press <b>Archive</b>.</div>
+      <div id="runPanel" hidden>
+        <div class="run-head">
+          <div id="runTitle" class="run-title"></div>
+          <div id="runStatus" class="pill"></div>
+        </div>
+        <div id="activity" class="activity"></div>
+        <div id="catProgress" class="cat-progress"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h2 class="card-title">Log</h2>
+        <div class="seg small" role="group" aria-label="Log filter">
+          <button type="button" data-log="all" class="on">All</button>
+          <button type="button" data-log="warn">Warnings</button>
+          <button type="button" data-log="error">Errors</button>
+        </div>
+      </div>
+      <ol id="log" class="log" aria-live="polite"></ol>
+      <div class="log-actions"><button id="copyLog" class="link-btn" type="button">Copy log</button> · <button id="clearLog" class="link-btn" type="button">Clear</button></div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">Queue &amp; history</h2>
+      <div id="queue" class="jobs"></div>
+      <div id="history" class="jobs"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  Gram Archiver is not affiliated with Instagram or Meta. Archive only content you have the right to keep, and respect other people's privacy and copyright.
+</footer>
+</body>
+</html>
